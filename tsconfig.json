@@ -27,5 +27,6 @@
   ],
   "types": [
     "typePatches"
-  ]
+  ],
+  "extends": "./tsconfig.paths.json"
 }

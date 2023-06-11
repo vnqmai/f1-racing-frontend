@@ -1,0 +1,19 @@
+.f1-racing-filters {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+
+  .form-group {
+    display: flex;
+    align-items: center;
+    margin-right: 10px;
+    
+    label {
+      margin-right: 5px;
+      margin-bottom: 0;
+      font-weight: bold;
+      height: 38px;
+      line-height: 38px;
+    }
+  }
+}
