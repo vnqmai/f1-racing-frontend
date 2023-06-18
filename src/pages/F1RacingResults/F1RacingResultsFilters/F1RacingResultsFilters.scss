@@ -1,12 +1,13 @@
 .f1-racing-filters {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  margin-bottom: 20px;
 
   .form-group {
     display: flex;
     align-items: center;
     margin-right: 10px;
+    margin-bottom: 20px;
     
     label {
       margin-right: 5px;
@@ -14,6 +15,15 @@
       font-weight: bold;
       height: 38px;
       line-height: 38px;
+      width: 50px;
     }
+  }
+
+  .form-control {
+    width: 200px;
+  }
+
+  .f1-select {
+    width: 200px;
   }
 }

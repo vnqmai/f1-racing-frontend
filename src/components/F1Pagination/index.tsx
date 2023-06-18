@@ -18,7 +18,7 @@ export default function F1Pagination(props: IF1PaginationProps) {
   };
 
   return (
-    <div>
+    <div className="f1-pagination">
       <PaginationControl
         page={currentPage}
         between={3}

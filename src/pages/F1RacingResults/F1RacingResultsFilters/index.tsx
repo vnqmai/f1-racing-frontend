@@ -1,14 +1,14 @@
 import { OptionType } from "@/types";
-import * as React from "react";
+import React, { useEffect, useState } from "react";
+import { Form, FormGroup, FormLabel } from "react-bootstrap";
 import Select from "react-select";
 import "./F1RacingResultsFilters.scss";
-import { FormGroup, FormLabel } from "react-bootstrap";
 
 export interface IF1RacingResultsFiltersProps {
   selectYear: (year: string | number) => void;
   selectGrand: (grand: string) => void;
   selectTeam: (team: string) => void;
-  selectDriver: (driver: string) => void;
+  selectDriver: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export default function F1RacingResultsFilters(
@@ -16,51 +16,36 @@ export default function F1RacingResultsFilters(
 ) {
   const { selectYear, selectGrand, selectTeam, selectDriver } = props;
 
-  const yearOptions = (startYear: number = 1950) => {
-    const currentYear = new Date().getFullYear(),
-      years = [];
-    while (startYear <= currentYear) {
-      const yearItem = startYear++;
-      years.push({
-        value: yearItem,
-        label: yearItem,
-      });
-    }
-    return years;
-  };
+  const [yearOptions, setYearOptions] = useState([]);
+  const [grandOptions, setGrandOptions] = useState([]);
+  const [teamOptions, setTeamOptions] = useState([]);
 
-  const grandOptions = [
-    {
-      value: "BAHRAIN",
-      label: "BAHRAIN",
-    },
-    {
-      value: "SAUDI ARABIA",
-      label: "SAUDI ARABIA",
-    },
-  ];
+  useEffect(() => {
+    fetchYearOptions()
+    fetchGrandOptions()
+    fetchTeamOptions()
+  }, [])
 
-  const teamOptions = [
-    {
-      value: "Red Bull Racing Honda RBPT",
-      label: "Red Bull Racing Honda RBPT",
-    },
-    {
-      value: "Mercedes",
-      label: "Mercedes",
-    },
-  ];
+  const fetchYearOptions = async () => {
+    const response = await fetch(`${process.env.REACT_APP_BASE_API_URL}/years`)
+    const years = await response.json();
+    const formatedYearsOptions =  years.map((year: string) => ({ value: year, label: year }))
+    setYearOptions(formatedYearsOptions)
+  }
 
-  const driverOptions = [
-    {
-      value: "Verstappen Max",
-      label: "Verstappen Max",
-    },
-    {
-      value: "Perez Sergio",
-      label: "Perez Sergio",
-    },
-  ];
+  const fetchGrandOptions = async () => {
+    const response = await fetch(`${process.env.REACT_APP_BASE_API_URL}/grands`)
+    const grands = await response.json();
+    const formatedGrandsOptions =  grands.map((grand: string) => ({ value: grand, label: grand }))
+    setGrandOptions(formatedGrandsOptions)
+  }
+
+  const fetchTeamOptions = async () => {
+    const response = await fetch(`${process.env.REACT_APP_BASE_API_URL}/teams`)
+    const teams = await response.json();
+    const formatedTeamsOptions =  teams.map((team: string) => ({ value: team, label: team }))
+    setTeamOptions(formatedTeamsOptions)
+  }
 
   const handleSelectYear = (item: OptionType) => {
     selectYear(item.value);
@@ -74,17 +59,36 @@ export default function F1RacingResultsFilters(
     selectTeam(item.value);
   };
 
-  const handleSelectDriver = (item: OptionType) => {
-    selectDriver(item.value);
+  const handleDriverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      selectDriver(e);
   };
 
   return (
     <div className="f1-racing-filters">
       <FormGroup className="form-group">
+        <FormLabel>Driver</FormLabel>
+        <Form.Control
+          placeholder="Driver"
+          aria-label="Driver"
+          aria-describedby="basic-addon1"
+          onChange={handleDriverChange}
+        />
+      </FormGroup>
+      <FormGroup className="form-group">
+        <FormLabel>Team</FormLabel>
+        <Select
+          placeholder="Team"
+          className="f1-select"
+          options={teamOptions}
+          onChange={handleSelectTeam}
+        />
+      </FormGroup>
+      <FormGroup className="form-group">
         <FormLabel>Year</FormLabel>
         <Select
           placeholder="Year"
-          options={yearOptions()}
+          className="f1-select"
+          options={yearOptions}
           onChange={handleSelectYear}
         />
       </FormGroup>
@@ -93,26 +97,9 @@ export default function F1RacingResultsFilters(
         <FormLabel>Grand</FormLabel>
         <Select
           placeholder="Grand"
+          className="f1-select"
           options={grandOptions}
           onChange={handleSelectGrand}
-        />
-      </FormGroup>
-
-      <FormGroup className="form-group">
-        <FormLabel>Team</FormLabel>
-        <Select
-          placeholder="Team"
-          options={teamOptions}
-          onChange={handleSelectTeam}
-        />
-      </FormGroup>
-
-      <FormGroup className="form-group">
-        <FormLabel>Driver</FormLabel>
-        <Select
-          placeholder="Driver"
-          options={driverOptions}
-          onChange={handleSelectDriver}
         />
       </FormGroup>
     </div>

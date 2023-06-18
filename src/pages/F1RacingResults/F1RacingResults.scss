@@ -4,4 +4,28 @@
   h1 {
     margin-bottom: 20px;
   }
+
+  .column-no {
+    width: 79px;
+  }
+
+  .column-driver {
+    width: 320px;
+  }
+
+  .column-car {
+    width: 370px;
+  }
+
+  .column-year {
+    width: 110px;
+  }
+
+  .column-grand {
+    width: 235px;
+  }
+
+  .f1-pagination .pagination {
+    justify-content: center;
+  }
 }

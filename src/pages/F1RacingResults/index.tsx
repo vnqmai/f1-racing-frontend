@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import { Col, Container, Row } from "react-bootstrap";
+import debounce from "lodash/debounce";
 import { ResultItem } from "@/types";
 import F1DataTable from "@/components/F1DataTable";
 import F1Pagination from "@/components/F1Pagination";
 import F1RacingResultsFilters from "./F1RacingResultsFilters";
+import F1RacingResultsTeamChart from "./F1RacingResultsTeamChart";
+import "./F1RacingResults.scss";
 
 export interface IF1RacingResultsProps {}
 
@@ -35,7 +38,8 @@ export default function F1RacingResults(props: IF1RacingResultsProps) {
     team: string | undefined | null = undefined,
     driver: string | undefined | null = undefined
   ) => {
-    const stringUrl = "http://localhost:3000/data";
+    const stringUrl = `${process.env.REACT_APP_BASE_API_URL}/data`;
+    console.log(stringUrl)
     const url = new URL(stringUrl);
     const params = url.searchParams;
     params.append("_limit", "20");
@@ -43,12 +47,13 @@ export default function F1RacingResults(props: IF1RacingResultsProps) {
     year && params.append("year", year.toString());
     grand && params.append("grand", grand);
     team && params.append("car", team);
-    // driver && params.append('fullName_like', driver);
+    driver && params.append('driverFullName_like', driver);
 
     const response = await fetch(url.toString());
     const docs = Number.parseInt(response.headers.get("X-Total-Count") || "0");
-    const data: ResultItem[] = await response.json();
     setTotalDocs(docs);
+
+    const data: ResultItem[] = await response.json();
     setItems(data);
   };
 
@@ -64,7 +69,11 @@ export default function F1RacingResults(props: IF1RacingResultsProps) {
 
   const onGrandChange = (grand: string) => {
     setSelectedGrand(grand);
-    fetchData(currentPage, selectedYear, grand, selectedTeam, selectedDriver);
+    if (grand.toLowerCase() === 'all') {
+      fetchData(currentPage, selectedYear, grand, selectedTeam, selectedDriver);
+    } else {
+      fetchData(currentPage, selectedYear, grand, selectedTeam, selectedDriver);
+    }
   };
 
   const onTeamChange = (team: string) => {
@@ -72,10 +81,13 @@ export default function F1RacingResults(props: IF1RacingResultsProps) {
     fetchData(currentPage, selectedYear, selectedGrand, team, selectedDriver);
   };
 
-  const onDriverChange = (driver: string) => {
+  const onDriverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const driver = e.target.value;
     setSelectedDriver(driver);
     fetchData(currentPage, selectedYear, selectedGrand, selectedTeam, driver);
   };
+
+  const debounceOnDriverChange = debounce(onDriverChange, 500);
 
   return (
     <Container className="f1-racing-results">
@@ -90,13 +102,26 @@ export default function F1RacingResults(props: IF1RacingResultsProps) {
             selectYear={onYearChange}
             selectGrand={onGrandChange}
             selectTeam={onTeamChange}
-            selectDriver={onDriverChange}
+            selectDriver={debounceOnDriverChange}
           />
         </Col>
       </Row>
-      <Row>
-        <Col sm="12"></Col>
-      </Row>
+      {/* <Row>
+        <Col sm="12">
+          <F1BarChart />
+        </Col>
+      </Row> */}
+      {
+        selectedTeam && selectedYear &&
+        <Row>
+          <Col sm="12">
+            <F1RacingResultsTeamChart
+              team={selectedTeam}
+              year={selectedYear}
+            />
+          </Col>
+        </Row>
+      }
       <Row>
         <Col sm="12">
           <F1DataTable

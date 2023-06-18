@@ -1,5 +1,5 @@
-import "./App.scss";
-import F1RacingResults from "./pages/F1RacingResults";
+import "@/App.scss";
+import F1RacingResults from "@/pages/F1RacingResults";
 
 function App() {
   return (
