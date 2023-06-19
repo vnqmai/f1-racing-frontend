@@ -55,7 +55,7 @@ export default function F1RacingResultsTeamChart (props: IF1RacingResultsTeamCha
     year: number | string | undefined | null = undefined,
     team: string | undefined | null = undefined,
   ) => {
-    const stringUrl = `${process.env.BASE_API_URL}/data`;
+    const stringUrl = `${process.env.REACT_APP_BASE_API_URL}/data`;
     const url = new URL(stringUrl);
     const params = url.searchParams;
     year && params.append("year", year.toString());
